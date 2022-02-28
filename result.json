@@ -1,0 +1,143 @@
+{
+    "announce": "http://sukebei.tracker.wf:8888/announce",
+    "announce-list": [
+        [
+            "http://sukebei.tracker.wf:8888/announce"
+        ],
+        [
+            "udp://tracker.archlinux.org.theoks.net:6969/announce"
+        ],
+        [
+            "udp://tracker.torrent.eu.org:451/announce"
+        ],
+        [
+            "udp://exodus.desync.com:6969/announce"
+        ],
+        [
+            "udp://tracker.openbittorrent.com:6969"
+        ],
+        [
+            "http://tracker.tasvideos.org:6969/announce"
+        ],
+        [
+            "udp://tracker.leech.ie:1337/announce"
+        ],
+        [
+            "udp://tracker.opentrackr.org:1337/announce"
+        ],
+        [
+            "udp://tracker.coppersurfer.tk:6969/announce"
+        ],
+        [
+            "udp://tracker.internetwarriors.net:1337"
+        ],
+        [
+            "udp://tracker.internetwarriors.net:1337/announce"
+        ],
+        [
+            "udp://open.stealth.si:80/announce"
+        ],
+        [
+            "udp://9.rarbg.me:2710/announce"
+        ],
+        [
+            "udp://9.rarbg.me:2710"
+        ],
+        [
+            "http://anidex.moe:6969/announce"
+        ],
+        [
+            "http://freerainbowtables.com:6969/announce"
+        ],
+        [
+            "http://www.freerainbowtables.com:6969/announce"
+        ],
+        [
+            "udp://9.rarbg.com:2830/announce"
+        ],
+        [
+            "http://tracker2.itzmx.com:6961/announce"
+        ],
+        [
+            "http://tracker.etree.org:6969/announce"
+        ],
+        [
+            "http://www.thetradersden.org/forums/tracker:80/announce.php"
+        ],
+        [
+            "udp://udp-tracker.shittyurl.org:6969/announce"
+        ],
+        [
+            "https://tracker.shittyurl.org/announce"
+        ],
+        [
+            "http://tracker.shittyurl.org/announce"
+        ],
+        [
+            "udp://bt.firebit.org:2710/announce"
+        ],
+        [
+            "http://bt.firebit.org:2710/announce"
+        ],
+        [
+            "udp://open.tracker.cl:1337/announce"
+        ],
+        [
+            "udp://tracker.leechers-paradise.org:6969/announce"
+        ],
+        [
+            "udp://tracker.opentrackr.org:1337/announce"
+        ],
+        [
+            "udp://tracker.cyberia.is:6969/announce"
+        ],
+        [
+            "udp://open.demonii.si:1337/announce"
+        ],
+        [
+            "udp://open.stealth.si/announce"
+        ],
+        [
+            "udp://exodus.desync.com:6969/announce"
+        ],
+        [
+            "udp://tracker.moeking.me:6969/announce"
+        ],
+        [
+            "udp://explodie.org:6969/announce"
+        ],
+        [
+            "udp://9.rarbg.me:2740/announce"
+        ],
+        [
+            "udp://9.rarbg.to:2790/announce"
+        ]
+    ],
+    "comment": "Torrent downloaded from torlock.com",
+    "created by": "NyaaV2",
+    "creation date": 1643094917,
+    "encoding": "utf-8",
+    "info": {
+        "files": [
+            {
+                "length": 3450554879,
+                "path": [
+                    "hhd800.com@FC2-PPV-2615407.mp4"
+                ]
+            },
+            {
+                "length": 0,
+                "path": [
+                    "offkab@sukebei.txt"
+                ]
+            }
+        ],
+        "name": "FC2-PPV-2615407",
+        "piece length": 2097152,
+        "pieces": [
+            "614463fcf82fdfafe5d7abc3f9ba04c95f25f63d",
+            "cc985e9c2ff3624f7077814406c96a9525b72937",
+            "19875bd2dca189b7439fbb252db4c1063dbc45d7"
+        ]
+    }
+}
