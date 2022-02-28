@@ -1,4 +1,4 @@
-#!c:\users\aspire\downloads\torrent_geolocation\venv_torrentgeo\scripts\python.exe
+#!C:\Users\aspire\Downloads\torrent_geolocation\venv_torrentGeo\Scripts\python.exe
 
 # $Id: rst2odt.py 5839 2009-01-07 19:09:28Z dkuhlman $
 # Author: Dave Kuhlman <dkuhlman@rexx.com>

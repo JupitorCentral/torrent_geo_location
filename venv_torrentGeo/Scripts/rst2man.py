@@ -1,4 +1,4 @@
-#!c:\users\aspire\downloads\torrent_geolocation\venv_torrentgeo\scripts\python.exe
+#!C:\Users\aspire\Downloads\torrent_geolocation\venv_torrentGeo\Scripts\python.exe
 
 # Author:
 # Contact: grubert@users.sf.net

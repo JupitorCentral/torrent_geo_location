@@ -6,7 +6,6 @@ from turtle import width
 from urllib import request as req
 from urllib import parse
 from ip2geotools.databases.noncommercial import DbIpCity
-from gcmap import GCMapper
 import importlib
 
 
@@ -82,10 +81,10 @@ def plot_worldmap():
     lons2 = lons1[1:] + lons1[:1]
     lats2 = lats1[1:] + lats1[:1]
 
-    gcm = GCMapper(width=width, height=height, bgcol=bgcol)
-    gcm.set_data(lons1, lats1, lons2, lats2)
-    img = gcm.draw()
-    img.save('output.png')
+    # gcm = GCMapper(width=width, height=height, bgcol=bgcol)
+    # gcm.set_data(lons1, lats1, lons2, lats2)
+    # img = gcm.draw()
+    # img.save('output.png')
 
 
 def test_save_geo_list(geo_list):
@@ -109,11 +108,12 @@ def test_implib():
 
 if __name__ == '__main__':
     tfile = 'result.json'
-    # geo_total = get_all_geoinfo(tfile)
+    geo_total = get_all_geoinfo(tfile)
 
     plot_worldmap()
-    # print(type(geo_total))
+    print(type(geo_total))
 
-    # print(geo_total)
-    # test_save_geo_list(geo_total)
-    # test_implib()
+    print(geo_total)
+    test_save_geo_list(geo_total)
+    test_implib()
+    get_geoinfo_ip2()

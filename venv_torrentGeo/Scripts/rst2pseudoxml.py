@@ -1,4 +1,4 @@
-#!c:\users\aspire\downloads\torrent_geolocation\venv_torrentgeo\scripts\python.exe
+#!C:\Users\aspire\Downloads\torrent_geolocation\venv_torrentGeo\Scripts\python.exe
 
 # $Id: rst2pseudoxml.py 4564 2006-05-21 20:44:42Z wiemann $
 # Author: David Goodger <goodger@python.org>

@@ -1,4 +1,4 @@
-#!c:\users\aspire\downloads\torrent_geolocation\venv_torrentgeo\scripts\python.exe
+#!C:\Users\aspire\Downloads\torrent_geolocation\venv_torrentGeo\Scripts\python.exe
 
 # $Id: rst2odt_prepstyles.py 8346 2019-08-26 12:11:32Z milde $
 # Author: Dave Kuhlman <dkuhlman@rexx.com>

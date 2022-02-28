@@ -1,4 +1,4 @@
-#!c:\users\aspire\downloads\torrent_geolocation\venv_torrentgeo\scripts\python.exe
+#!C:\Users\aspire\Downloads\torrent_geolocation\venv_torrentGeo\Scripts\python.exe
 # -*- coding: utf8 -*-
 # :Copyright: © 2015 Günter Milde.
 # :License: Released under the terms of the `2-Clause BSD license`_, in short:

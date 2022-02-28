@@ -1,4 +1,4 @@
-#!c:\users\aspire\downloads\torrent_geolocation\venv_torrentgeo\scripts\python.exe
+#!C:\Users\aspire\Downloads\torrent_geolocation\venv_torrentGeo\Scripts\python.exe
 
 # $Id: rst2xetex.py 7847 2015-03-17 17:30:47Z milde $
 # Author: Guenter Milde
