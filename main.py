@@ -12,9 +12,7 @@ def namestr(obj, namespace):
 
 
 def all_announce_list(torrent_file_name):
-    # f = open(torrent_file)
     d = torrent_parser.parse_torrent_file(torrent_file_name)
-    # d = json.load(f)
     l = []
     for a in d['announce-list']:
         o = parse.urlparse(a[0])
@@ -35,7 +33,7 @@ def get_geoinfo_ipapi(target):
     d = json.load(rep)
 
     # status country countryCode region regionName city zip lat lon timezone isp org as query
-    r = (d['regionName'], d['lat'], d['lon'])
+    r = (d['regionName'], d['lat'], d['lon'], target)
     return r
 
 
@@ -43,16 +41,22 @@ def get_geoinfo_ip2(target):
     print(target)
     ip = socket.gethostbyname(target)
     rep = DbIpCity.get(ip, api_key='free')
-    return (rep.region, rep.latitude, rep.longitude)
+    return (rep.region, rep.latitude, rep.longitude, target)
 
 
-def get_all_geoinfo(torrent_file):
+def get_all_geoinfo(torrent_file, ip_method):
     alist = all_announce_list(torrent_file_name=torrent_file)
 
     geo_list = []
     for domain in alist:
         try:
-            info = get_geoinfo_ip2(domain)
+            if ip_method == 'ip2':
+                info = get_geoinfo_ip2(domain)
+            elif ip_method == 'ipapi':
+                info = get_geoinfo_ipapi(domain)
+            else:
+                print('wrong ip get method')
+                break
             if info.count(None) > 0:
                 continue
             geo_list.append(info)
@@ -68,11 +72,11 @@ def plot_worldmap():
     geo_list = md.geo_list
 
 
-    m = folium.Map(location=[sum(j for i, j, k in geo_list)/len(geo_list), sum(k for i, j, k in geo_list)/len(geo_list)],
+    m = folium.Map(location=[sum(j for i, j, k, l in geo_list)/len(geo_list), sum(k for i, j, k, l in geo_list)/len(geo_list)],
                     zoom_start=3)
     for cood in geo_list:
         folium.Marker(
-            [cood[1], cood[2]], popup=f"{cood[0]}"
+            [cood[1], cood[2]], popup=f"{cood[0]}", tooltip=cood[3]
         ).add_to(m)
 
     m.save('map.html')
@@ -94,10 +98,12 @@ def test():
     pass
 
 if __name__ == '__main__':
-    tfile = 'result.json'
     tfile = 'test.torrent'
-    geo_total = get_all_geoinfo(tfile)
+
+    # ip2, ipapi
+    geo_total = get_all_geoinfo(tfile, 'ip2')
     save_geo_list(geo_total)
     plot_worldmap()
 
     # test()
+    
