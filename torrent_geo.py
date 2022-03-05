@@ -1,12 +1,11 @@
 
-import json
-import re
-import socket
+import json, socket, io
 from turtle import width
 from urllib import request as req
 from urllib import parse
 from ip2geotools.databases.noncommercial import DbIpCity
-import importlib
+import importlib, folium, webbrowser
+from PIL import Image
 
 
 def namestr(obj, namespace):
@@ -64,27 +63,23 @@ def get_all_geoinfo(torrent_file):
 
 def plot_worldmap():
 
-    m = importlib.import_module('variables')
-    geo_list = m.geo_list
-
-    width, height = 800, 600
-    bgcol = (255, 255, 255)
+    md = importlib.import_module('variables')
+    geo_list = md.geo_list
 
 
-    lons1, lats1 = [], []
-    for x in geo_list:
-        lons1.append(x[2])
-        lats1.append(x[1])
+    m = folium.Map(location=[sum(j for i, j, k in geo_list)/len(geo_list), sum(k for i, j, k in geo_list)/len(geo_list)],
+                    zoom_start=3)
+    for cood in geo_list:
+        folium.Marker(
+            [cood[1], cood[2]], popup=f"{cood[0]}"
+        ).add_to(m)
 
-    # lons1 = [-79.4, -73.9, -122.4, -123.1, -0.1]
-    # lats1 = [43.7,  40.7,   37.8,   49.2,  51.5]
-    lons2 = lons1[1:] + lons1[:1]
-    lats2 = lats1[1:] + lats1[:1]
 
-    # gcm = GCMapper(width=width, height=height, bgcol=bgcol)
-    # gcm.set_data(lons1, lats1, lons2, lats2)
-    # img = gcm.draw()
-    # img.save('output.png')
+    # m.save('map.html')
+    # webbrowser.open('map.html')
+    m_img = m._to_png()
+    img = Image.open(io.BytesIO(m_img))
+    img.save('image.png')
 
 
 def test_save_geo_list(geo_list):
@@ -92,28 +87,20 @@ def test_save_geo_list(geo_list):
     # save list
     f = open('variables.py', 'w', encoding='utf-8')
 
-    # f.write('variables = {\n')
-    # for x in geo_list:
-    #     f.write(f"\t\"{namestr(x, locals())[0]}\" : {x},\n")
-    # f.write('}\n')
     f.write(f"geo_list = {geo_list}")
     f.close()
     
 
-def test_implib():
-    m = importlib.import_module('variables')
-
-    geo_list = m.geo_list
 
 
 if __name__ == '__main__':
     tfile = 'result.json'
-    geo_total = get_all_geoinfo(tfile)
+    # geo_total = get_all_geoinfo(tfile)
 
     plot_worldmap()
-    print(type(geo_total))
+    # print(type(geo_total))
 
-    print(geo_total)
-    test_save_geo_list(geo_total)
-    test_implib()
-    get_geoinfo_ip2()
+    # print(geo_total)
+    # test_save_geo_list(geo_total)
+    # test_implib()
+    # get_geoinfo_ip2()
