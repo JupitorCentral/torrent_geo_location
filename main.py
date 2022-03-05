@@ -1,21 +1,20 @@
 
 import json, socket, io
-from turtle import width
 from urllib import request as req
 from urllib import parse
 from ip2geotools.databases.noncommercial import DbIpCity
 import importlib, folium, webbrowser
-from PIL import Image
-
+import torrent_parser
 
 def namestr(obj, namespace):
     return [name for name in namespace if namespace[name] is obj]
 # globals(), locals()
 
 
-def all_announce_list(torrent_file):
-    f = open(torrent_file)
-    d = json.load(f)
+def all_announce_list(torrent_file_name):
+    # f = open(torrent_file)
+    d = torrent_parser.parse_torrent_file(torrent_file_name)
+    # d = json.load(f)
     l = []
     for a in d['announce-list']:
         o = parse.urlparse(a[0])
@@ -26,7 +25,6 @@ def all_announce_list(torrent_file):
             l.append(o.netloc[0:o.netloc.find(':')])
     return l
 
-# geo test
 
 
 def get_geoinfo_ipapi(target):
@@ -49,12 +47,15 @@ def get_geoinfo_ip2(target):
 
 
 def get_all_geoinfo(torrent_file):
-    alist = all_announce_list(torrent_file=torrent_file)
+    alist = all_announce_list(torrent_file_name=torrent_file)
 
     geo_list = []
     for domain in alist:
         try:
-            geo_list.append(get_geoinfo_ip2(domain))
+            info = get_geoinfo_ip2(domain)
+            if info.count(None) > 0:
+                continue
+            geo_list.append(info)
         except:
             pass
 
@@ -74,15 +75,11 @@ def plot_worldmap():
             [cood[1], cood[2]], popup=f"{cood[0]}"
         ).add_to(m)
 
-
-    # m.save('map.html')
-    # webbrowser.open('map.html')
-    m_img = m._to_png()
-    img = Image.open(io.BytesIO(m_img))
-    img.save('image.png')
+    m.save('map.html')
+    webbrowser.open('map.html')
 
 
-def test_save_geo_list(geo_list):
+def save_geo_list(geo_list):
 
     # save list
     f = open('variables.py', 'w', encoding='utf-8')
@@ -90,17 +87,17 @@ def test_save_geo_list(geo_list):
     f.write(f"geo_list = {geo_list}")
     f.close()
     
-
-
+def test():
+    # md = importlib.import_module('variables')
+    # geo_list = md.geo_list
+    # print(geo_list))
+    pass
 
 if __name__ == '__main__':
     tfile = 'result.json'
-    # geo_total = get_all_geoinfo(tfile)
-
+    tfile = 'test.torrent'
+    geo_total = get_all_geoinfo(tfile)
+    save_geo_list(geo_total)
     plot_worldmap()
-    # print(type(geo_total))
 
-    # print(geo_total)
-    # test_save_geo_list(geo_total)
-    # test_implib()
-    # get_geoinfo_ip2()
+    # test()
