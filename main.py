@@ -1,5 +1,10 @@
 
+from ast import arg
 import json, socket, io
+import queue 
+from multiprocessing import cpu_count
+import multiprocessing as mtp
+import string
 from urllib import request as req
 from urllib import parse
 from ip2geotools.databases.noncommercial import DbIpCity
@@ -36,7 +41,6 @@ def get_geoinfo_ipapi(target):
     r = (d['regionName'], d['lat'], d['lon'], target)
     return r
 
-
 def get_geoinfo_ip2(target):
     print(target)
     ip = socket.gethostbyname(target)
@@ -44,16 +48,65 @@ def get_geoinfo_ip2(target):
     return (rep.region, rep.latitude, rep.longitude, target)
 
 
-def get_all_geoinfo(torrent_file, ip_method):
-    alist = all_announce_list(torrent_file_name=torrent_file)
+def get_geoinfo_ip2_multi(alist_q:mtp.Queue, geo_list_q:mtp.Queue):
+    
 
+    while True:
+        try:
+            domain = alist_q.get_nowait()
+        except queue.Empty:
+            break
+        else:
+            try:
+                ip = socket.gethostbyname(domain)
+            except:
+                print(f"{domain} : Faild")
+                continue
+            print(domain)
+            rep = DbIpCity.get(ip, api_key='free')
+            item = (rep.region, rep.latitude, rep.longitude, domain)
+            if item.count(None) == 0:
+                geo_list_q.put(item)
+
+    return True
+
+
+def get_all_geoinfo(torrent_file:string, ip_method:string, pr_number:int=0):
+    alist = all_announce_list(torrent_file_name=torrent_file)
     geo_list = []
+
+    if ip_method == 'ip2_multi':
+
+        alist_q = mtp.Queue()
+        geo_list_q = mtp.Queue()
+
+        for domain in alist:
+            alist_q.put(domain)
+
+        prs = []
+
+        pr_count = mtp.cpu_count() if pr_number == 0 else pr_number
+
+        for _ in range(pr_count):
+            pr = mtp.Process(target=get_geoinfo_ip2_multi, args=(alist_q, geo_list_q))
+            prs.append(pr)
+            pr.start()
+        for pr in prs:
+            pr.join()
+        geo_list_q.put('STOP')
+        
+        for item in iter(geo_list_q.get, 'STOP'):
+            geo_list.append(item)
+        return geo_list
+
+
     for domain in alist:
         try:
             if ip_method == 'ip2':
                 info = get_geoinfo_ip2(domain)
             elif ip_method == 'ipapi':
                 info = get_geoinfo_ipapi(domain)
+
             else:
                 print('wrong ip get method')
                 break
@@ -95,13 +148,18 @@ def test():
     # md = importlib.import_module('variables')
     # geo_list = md.geo_list
     # print(geo_list))
+    tfile = 'test.torrent'
+    rst = get_all_geoinfo(tfile, 'ip2_multi', 12)
+    save_geo_list(rst)
+    plot_worldmap()
+
     pass
 
 if __name__ == '__main__':
     tfile = 'test.torrent'
 
-    # ip2, ipapi
-    geo_total = get_all_geoinfo(tfile, 'ip2')
+    # ip2, ipapi, ip2_multi
+    geo_total = get_all_geoinfo(tfile, 'ip2_multi', 10)
     save_geo_list(geo_total)
     plot_worldmap()
 
