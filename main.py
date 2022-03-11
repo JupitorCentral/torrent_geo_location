@@ -1,15 +1,11 @@
 
-from ast import arg
-import json, socket, io
-import queue 
-from multiprocessing import cpu_count
+import json, socket, queue, string, torrent_parser, importlib, folium, webbrowser
 import multiprocessing as mtp
-import string
 from urllib import request as req
 from urllib import parse
 from ip2geotools.databases.noncommercial import DbIpCity
-import importlib, folium, webbrowser
-import torrent_parser
+
+
 
 def namestr(obj, namespace):
     return [name for name in namespace if namespace[name] is obj]
@@ -17,6 +13,7 @@ def namestr(obj, namespace):
 
 
 def all_announce_list(torrent_file_name):
+    print("parsing torrent file...")
     d = torrent_parser.parse_torrent_file(torrent_file_name)
     l = []
     for a in d['announce-list']:
@@ -27,7 +24,6 @@ def all_announce_list(torrent_file_name):
         else:
             l.append(o.netloc[0:o.netloc.find(':')])
     return l
-
 
 
 def get_geoinfo_ipapi(target):
@@ -75,6 +71,7 @@ def get_all_geoinfo(torrent_file:string, ip_method:string, pr_number:int=0):
     alist = all_announce_list(torrent_file_name=torrent_file)
     geo_list = []
 
+    print('fetching geo infos...')
     if ip_method == 'ip2_multi':
 
         alist_q = mtp.Queue()
@@ -92,7 +89,7 @@ def get_all_geoinfo(torrent_file:string, ip_method:string, pr_number:int=0):
             prs.append(pr)
             pr.start()
         for pr in prs:
-            pr.join()
+            pr.join(3.0)
         geo_list_q.put('STOP')
         
         for item in iter(geo_list_q.get, 'STOP'):
@@ -121,6 +118,7 @@ def get_all_geoinfo(torrent_file:string, ip_method:string, pr_number:int=0):
 
 def plot_worldmap():
 
+    print('plotting...')
     md = importlib.import_module('variables')
     geo_list = md.geo_list
 
@@ -145,9 +143,7 @@ def save_geo_list(geo_list):
     f.close()
     
 def test():
-    # md = importlib.import_module('variables')
-    # geo_list = md.geo_list
-    # print(geo_list))
+    
     tfile = 'test.torrent'
     rst = get_all_geoinfo(tfile, 'ip2_multi', 12)
     save_geo_list(rst)
@@ -155,7 +151,8 @@ def test():
 
     pass
 
-if __name__ == '__main__':
+def main():
+
     tfile = 'test.torrent'
 
     # ip2, ipapi, ip2_multi
@@ -163,5 +160,9 @@ if __name__ == '__main__':
     save_geo_list(geo_total)
     plot_worldmap()
 
-    # test()
+
+if __name__ == '__main__':
+
+    # main()
+    test()
     

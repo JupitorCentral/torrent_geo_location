@@ -1,51 +1,64 @@
-from ast import While, arg
-from audioop import mul
-from glob import glob
-from multiprocessing import Process, Pool, cpu_count, Lock
-import multiprocessing
-import os, queue
-from time import sleep
+import argparse
 
 
-def f(q:multiprocessing.Queue, rst:multiprocessing.Queue):
+# p_parser = argparse.ArgumentParser(add_help=False)
+# p_parser.add_argument('--foo', help='foo function')
+
+# parser = argparse.ArgumentParser(description='Process some integers.', parents=[p_parser])
+# parser.add_argument('integers', metavar='N', type=int, nargs='+',
+#                     help='an integer for the accumulator')
+# parser.add_argument('--sum', dest='accumulate', action='store_const',
+#                     const=sum, default=max,
+#                     help='sum the integers (default: find the max)')
+# parser.add_argument('--fun', dest='funtwo', action='store_const',
+#                     const=sum, default=max,
+#                     help='fun')
 
 
-    while True:
-        try:
-            x = q.get_nowait()
-        except queue.Empty:
-            break
-        else:
-            print(x)
-            # rst.append(x*x)
-            rst.put(x*x)
-            sleep(.3)
-    
-    return True
+# args = parser.parse_args(['--fun', '55'])
+# print(args)
+
+# print(args.accumulate(args.integers))
+
+def myfun():
+    print('myfun')
 
 
-if __name__ == '__main__':
+def my_sum(a, b):
+    return a+b
 
 
-    q = multiprocessing.Queue()
-    rst = multiprocessing.Queue()
+args = 0
 
-    for i in range(10):
-        q.put(i)
 
-    procs = []
-    while not q.empty():
-        proc = multiprocessing.Process(target=f, args=(q, rst))
-        print('start process')
-        sleep(0.1)
-        procs.append(proc)
-        proc.start()
+class FooAction(argparse.Action):
+    def __init__(self, option_strings, dest, nargs=2, **kwargs):
+        # if nargs is not None:
+        #     raise ValueError("nargs not allowed")
+        super().__init__(option_strings, dest, **kwargs)
 
-    for proc in procs:
-        proc.join()
+    def __call__(self, parser, namespace, values, option_string=None):
+        print('%r %r %r' % (namespace, values, option_string))
+        # print("%r" % (args.a + args.b))
 
-    rst.put('STOP')
-    for i in iter(rst.get, 'STOP'):
-        print(i, end=' ')
 
-    print('end')
+pars = argparse.ArgumentParser(
+    prog='test_parse', description='test parse argument')
+# pars.add_argument('--fun', dest='funfun', action='myfun', help='run fun')
+pars.add_argument('-f', '--fun')
+pars.add_argument('-k', '--kon')
+pars.add_argument('a')
+pars.add_argument('b')
+pars.add_argument('--sum', action=FooAction, nargs=2)
+# pars.add_argument('--sum', '-s', action=)
+
+# pars.print_help()
+# args = pars.parse_args('33 22 --sum'.split())
+args = pars.parse_args()
+
+print('a')
+print(args)
+
+# args = parser.parse_args()
+# parser.print_help()
+# print(f"arguments : {args}")
