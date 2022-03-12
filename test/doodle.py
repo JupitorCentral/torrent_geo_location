@@ -1,4 +1,5 @@
-import argparse
+import argparse, re
+
 
 
 # p_parser = argparse.ArgumentParser(add_help=False)
@@ -42,22 +43,28 @@ class FooAction(argparse.Action):
         # print("%r" % (args.a + args.b))
 
 
-pars = argparse.ArgumentParser(
-    prog='test_parse', description='test parse argument')
-# pars.add_argument('--fun', dest='funfun', action='myfun', help='run fun')
-pars.add_argument('-f', '--fun')
-pars.add_argument('-k', '--kon')
-pars.add_argument('a')
-pars.add_argument('b')
-pars.add_argument('--sum', action=FooAction, nargs=2)
-# pars.add_argument('--sum', '-s', action=)
+# pars = argparse.ArgumentParser(
+#     prog='test_parse', description='test parse argument')
+# # pars.add_argument('--fun', dest='funfun', action='myfun', help='run fun')
+# pars.add_argument('-f', '--fun')
+# pars.add_argument('-k', '--kon')
+# pars.add_argument('a')
+# pars.add_argument('b')
+# pars.add_argument('--sum', action=FooAction, nargs=2)
+# # pars.add_argument('--sum', '-s', action=)
 
-# pars.print_help()
-# args = pars.parse_args('33 22 --sum'.split())
-args = pars.parse_args()
+# # pars.print_help()
+# # args = pars.parse_args('33 22 --sum'.split())
+# args = pars.parse_args()
 
 print('a')
-print(args)
+print("%r", 223)
+l = [1,2,3,4,5]
+ann = r'udp://tracker.internetwarriors.net:1337/announce'
+print(re.search('/announce', ann))
+a2 = re.sub('/announce','',ann)
+print(re.sub('/announce','',ann))
+print(re.sub('/announce','',a2))
 
 # args = parser.parse_args()
 # parser.print_help()

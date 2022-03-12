@@ -1,10 +1,17 @@
 
-import json, socket, queue, string, torrent_parser, importlib, folium, webbrowser
+import json
+import socket
+import queue
+import string
+import torrent_parser
+import importlib
+import folium
+import webbrowser
 import multiprocessing as mtp
+import re
 from urllib import request as req
 from urllib import parse
 from ip2geotools.databases.noncommercial import DbIpCity
-
 
 
 def namestr(obj, namespace):
@@ -16,14 +23,20 @@ def all_announce_list(torrent_file_name):
     print("parsing torrent file...")
     d = torrent_parser.parse_torrent_file(torrent_file_name)
     l = []
+
+    # for a in d['announce-list']:
+    #     o = parse.urlparse(a[0])
+    #     k = o.netloc.find(':')
+    #     if k == -1:
+    #         l.append(o.netloc)
+    #     else:
+    #         l.append(o.netloc[0:o.netloc.find(':')])
+
     for a in d['announce-list']:
-        o = parse.urlparse(a[0])
-        k = o.netloc.find(':')
-        if k == -1:
-            l.append(o.netloc)
-        else:
-            l.append(o.netloc[0:o.netloc.find(':')])
+        l.append(re.sub('/announce', '', a[0]))
+
     return l
+    
 
 
 def get_geoinfo_ipapi(target):
@@ -37,6 +50,7 @@ def get_geoinfo_ipapi(target):
     r = (d['regionName'], d['lat'], d['lon'], target)
     return r
 
+
 def get_geoinfo_ip2(target):
     print(target)
     ip = socket.gethostbyname(target)
@@ -44,30 +58,36 @@ def get_geoinfo_ip2(target):
     return (rep.region, rep.latitude, rep.longitude, target)
 
 
-def get_geoinfo_ip2_multi(alist_q:mtp.Queue, geo_list_q:mtp.Queue):
-    
+# return : region, latitude, longitude, url
+def get_geoinfo_ip2_multi(alist_q: mtp.Queue, geo_list_q: mtp.Queue):
 
     while True:
         try:
-            domain = alist_q.get_nowait()
+            url = alist_q.get_nowait()
         except queue.Empty:
             break
         else:
             try:
+                o = parse.urlparse(url)
+                k = o.netloc.find(':')
+                if k == -1:
+                    domain = o.netloc
+                else:
+                    domain = o.netloc[0:o.netloc.find(':')]
                 ip = socket.gethostbyname(domain)
             except:
-                print(f"{domain} : Faild")
+                print(f"{url} : Faild")
                 continue
-            print(domain)
+            print(url)
             rep = DbIpCity.get(ip, api_key='free')
-            item = (rep.region, rep.latitude, rep.longitude, domain)
+            item = (rep.region, rep.latitude, rep.longitude, url)
             if item.count(None) == 0:
                 geo_list_q.put(item)
 
     return True
 
 
-def get_all_geoinfo(torrent_file:string, ip_method:string, pr_number:int=0):
+def get_all_geoinfo(torrent_file: string, ip_method: string, pr_number: int = 0):
     alist = all_announce_list(torrent_file_name=torrent_file)
     geo_list = []
 
@@ -85,17 +105,17 @@ def get_all_geoinfo(torrent_file:string, ip_method:string, pr_number:int=0):
         pr_count = mtp.cpu_count() if pr_number == 0 else pr_number
 
         for _ in range(pr_count):
-            pr = mtp.Process(target=get_geoinfo_ip2_multi, args=(alist_q, geo_list_q))
+            pr = mtp.Process(target=get_geoinfo_ip2_multi,
+                             args=(alist_q, geo_list_q))
             prs.append(pr)
             pr.start()
         for pr in prs:
             pr.join(3.0)
         geo_list_q.put('STOP')
-        
+
         for item in iter(geo_list_q.get, 'STOP'):
             geo_list.append(item)
         return geo_list
-
 
     for domain in alist:
         try:
@@ -122,9 +142,8 @@ def plot_worldmap():
     md = importlib.import_module('variables')
     geo_list = md.geo_list
 
-
     m = folium.Map(location=[sum(j for i, j, k, l in geo_list)/len(geo_list), sum(k for i, j, k, l in geo_list)/len(geo_list)],
-                    zoom_start=3)
+                   zoom_start=3)
     for cood in geo_list:
         folium.Marker(
             [cood[1], cood[2]], popup=f"{cood[0]}", tooltip=cood[3]
@@ -141,15 +160,7 @@ def save_geo_list(geo_list):
 
     f.write(f"geo_list = {geo_list}")
     f.close()
-    
-def test():
-    
-    tfile = 'test.torrent'
-    rst = get_all_geoinfo(tfile, 'ip2_multi', 12)
-    save_geo_list(rst)
-    plot_worldmap()
 
-    pass
 
 def main():
 
@@ -162,7 +173,4 @@ def main():
 
 
 if __name__ == '__main__':
-
-    # main()
-    test()
-    
+    main()
