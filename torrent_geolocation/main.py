@@ -153,11 +153,21 @@ def save_geo_list(geo_list):
     f.close()
 
 
-def main():
+def main(args):
 
-    tfile = 'test.torrent'
-
+    tfile = args.TORRENT_FILE
+    
     # ip2, ipapi, ip2_multi
-    geo_total = get_all_geoinfo(tfile, 'ip2_multi', 10)
+    if args.method == 'ip2':
+        if args.num_process is not None:
+            geo_total = get_all_geoinfo(tfile, 'ip2_multi', args.num_process)
+        else:
+            geo_total = get_all_geoinfo(tfile, 'ip2_multi', 6)
+    elif args.method == 'ipapi':
+        geo_total = get_all_geoinfo(tfile, 'ipapi', 0)
+    else:
+        print('wrong method input')
+        return -1
+
     save_geo_list(geo_total)
     plot_worldmap()

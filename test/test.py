@@ -2,6 +2,7 @@ import logging
 import os
 import unittest
 import sys
+from torrent_geolocation import __main__
 from torrent_geolocation.main import *
 
 class Test_main(unittest.TestCase):
@@ -26,3 +27,4 @@ class Test_main(unittest.TestCase):
         log = logging.getLogger()
         log.error(msg)
         self.assertEqual(1, 1)
+
