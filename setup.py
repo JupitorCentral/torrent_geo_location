@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="torrent_geolocation-JupitorCentral",
+    name="torrent_geolocation",
     version="0.0.1dev",
     author="JupitorCentral",
     author_email="jupitorsendsme@gmail.com",

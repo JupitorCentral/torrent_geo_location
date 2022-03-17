@@ -24,19 +24,10 @@ def all_announce_list(torrent_file_name):
     d = torrent_parser.parse_torrent_file(torrent_file_name)
     l = []
 
-    # for a in d['announce-list']:
-    #     o = parse.urlparse(a[0])
-    #     k = o.netloc.find(':')
-    #     if k == -1:
-    #         l.append(o.netloc)
-    #     else:
-    #         l.append(o.netloc[0:o.netloc.find(':')])
-
     for a in d['announce-list']:
         l.append(re.sub('/announce', '', a[0]))
 
     return l
-    
 
 
 def get_geoinfo_ipapi(target):
@@ -170,7 +161,3 @@ def main():
     geo_total = get_all_geoinfo(tfile, 'ip2_multi', 10)
     save_geo_list(geo_total)
     plot_worldmap()
-
-
-if __name__ == '__main__':
-    main()
