@@ -5,6 +5,6 @@ __pycache__/*
 __pycache__/
 
 map.html
-variables.py
+./variables.py
 activate.ps1
 
