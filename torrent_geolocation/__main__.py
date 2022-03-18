@@ -5,7 +5,12 @@ import argparse
 import string
 import sys
 from threading import local
-from torrent_geolocation.main import main
+print(os.getcwd())
+
+try: 
+    from torrent_geolocation.main import main
+except:
+    from main import main
 
 
 def execute_with_args():

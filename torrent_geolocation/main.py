@@ -32,12 +32,24 @@ def all_announce_list(torrent_file_name):
 
 def get_geoinfo_ipapi(target):
     info_server = 'http://ip-api.com/json/'
-    print(f"target : {target}")
-    ip = socket.gethostbyname(target)
-    rep = req.urlopen(info_server+ip)
-    d = json.load(rep)
+    print(f"{target} ... ", end='')
+    o = parse.urlparse(target)
+    k = o.netloc.find(':')
+    if k == -1:
+        domain = o.netloc
+    else:
+        domain = o.netloc[0:o.netloc.find(':')]
+
+    try:
+        ip = socket.gethostbyname(domain)
+        rep = req.urlopen(info_server+ip)
+        d = json.load(rep)
+    except:
+        print('failed')
+        return -1
 
     # status country countryCode region regionName city zip lat lon timezone isp org as query
+    print('done')
     r = (d['regionName'], d['lat'], d['lon'], target)
     return r
 
@@ -59,6 +71,7 @@ def get_geoinfo_ip2_multi(alist_q: mtp.Queue, geo_list_q: mtp.Queue):
             break
         else:
             try:
+                print(f'{url} ...  ', end='')
                 o = parse.urlparse(url)
                 k = o.netloc.find(':')
                 if k == -1:
@@ -67,9 +80,9 @@ def get_geoinfo_ip2_multi(alist_q: mtp.Queue, geo_list_q: mtp.Queue):
                     domain = o.netloc[0:o.netloc.find(':')]
                 ip = socket.gethostbyname(domain)
             except:
-                print(f"{url} : Faild")
+                print("Faild")
                 continue
-            print(url)
+            print("done")
             rep = DbIpCity.get(ip, api_key='free')
             item = (rep.region, rep.latitude, rep.longitude, url)
             if item.count(None) == 0:
@@ -132,6 +145,10 @@ def plot_worldmap():
     print('plotting...')
     md = importlib.import_module('variables')
     geo_list = md.geo_list
+
+    if len(geo_list) == 0:
+        print('no fetched data')
+        return -1
 
     m = folium.Map(location=[sum(j for i, j, k, l in geo_list)/len(geo_list), sum(k for i, j, k, l in geo_list)/len(geo_list)],
                    zoom_start=3)
